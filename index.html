@@ -59,8 +59,8 @@ label{display:block;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-sp
 .empty .logo{font-size:28px;display:block;margin-bottom:6px}
 #count{position:absolute;inset:0;display:none;place-items:center;background:#3B0004e6;text-align:center;
  font-family:'Caprasimo',serif;font-size:clamp(40px,14vw,100px);color:var(--alien)}
-#ctrl{background:var(--deep);padding:10px 14px 12px;display:grid;grid-template-columns:minmax(0,1fr);gap:6px;position:relative}
-#ctrl.off .bar,#ctrl.off .seek{opacity:.35;pointer-events:none}
+#ctrl{position:absolute;left:0;right:0;bottom:0;z-index:4;padding:34px 14px 8px;display:grid;grid-template-columns:minmax(0,1fr);gap:2px;background:linear-gradient(to top,#000d 0%,#0008 55%,transparent 100%);transition:opacity .25s}
+#ctrl.off{display:none}
 .seek{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
 .seek input[type=range]{flex:1;width:auto;min-width:0}
 .seek span{min-width:34px;text-align:center}
@@ -124,6 +124,24 @@ details .in{padding:6px 18px 18px;border-radius:0 0 16px 16px;background:var(--c
 body.noadm #lockNote{display:block}
 body.noadm .adm-only{display:none!important}
 
+/* player com controles sobre o vídeo */
+#player.idle #ctrl{opacity:0;pointer-events:none}
+#player.idle .stage{cursor:none}
+#bigPlay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;width:76px;height:76px;border-radius:50%;display:grid;place-items:center;
+ background:#D31914cc;color:var(--ecru);font-size:30px;padding-left:5px;pointer-events:none;box-shadow:0 6px 26px #0009}
+#ctrl .seek{color:#fffc}
+#ctrl .seek input[type=range]{height:4px}
+#ctrl .seek input[type=range]:hover{height:6px}
+#ctrl .ib{color:#fff}
+#ctrl .ib.play{background:var(--lava);color:var(--ecru);width:40px;height:40px;font-size:17px}
+#ctrl .bar{gap:2px}
+#frameBar{padding:8px 14px;background:var(--deep);font-size:12px}
+#frameBar button{padding:6px 16px;font-size:15px}
+#player:fullscreen{display:flex;flex-direction:column;justify-content:center;background:#000;border-radius:0;width:100%}
+#player:fullscreen .stage{aspect-ratio:auto;flex:1;min-height:0}
+#player:-webkit-full-screen{display:flex;flex-direction:column;justify-content:center;background:#000;border-radius:0;width:100%}
+#player:-webkit-full-screen .stage{aspect-ratio:auto;flex:1;min-height:0}
+
 /* lado a lado quando a tela está na horizontal (PC e tablet) */
 #side{display:contents}
 @media (orientation:landscape) and (min-width:900px) and (min-height:520px){
@@ -133,7 +151,7 @@ body.noadm .adm-only{display:none!important}
  #room.hide{display:none}
  .top{grid-column:1/-1;margin:12px 0 0;padding:7px 14px}
  .top .logo{font-size:22px}
- #player{grid-column:1;grid-row:2;align-self:center;margin:14px auto 0;width:min(100%,calc((100vh - 170px) * 16 / 9));width:min(100%,calc((100dvh - 170px) * 16 / 9))}
+ #player{grid-column:1;grid-row:2;align-self:center;margin:14px auto 0;width:min(100%,calc((100vh - 150px) * 16 / 9));width:min(100%,calc((100dvh - 150px) * 16 / 9))}
  #side{display:flex;flex-direction:column;grid-column:2;grid-row:2;min-height:0;gap:10px;margin-top:14px}
  #side>*{margin:0!important}
  #side .people{max-height:84px;overflow:auto;align-content:flex-start;flex:none}
@@ -192,7 +210,7 @@ body.noadm .adm-only{display:none!important}
    <div id="vm"></div>
    <div id="count"></div>
    <div id="shield" class="hide"></div>
-  </div>
+   <div id="bigPlay" class="hide">▶</div>
   <div id="ctrl" class="off">
    <div id="menu" class="hide">
     <label>Velocidade (vale para todos)</label>
@@ -212,7 +230,8 @@ body.noadm .adm-only{display:none!important}
     <button class="ib" id="bFull" title="Tela cheia">⛶</button>
    </div>
   </div>
-  <div id="frameBar" class="hide" style="padding:10px 14px 14px;background:#3B0004">
+  </div>
+  <div id="frameBar" class="hide">
    <span id="fbTxt" style="flex:1;min-width:200px"></span>
    <button class="pink adm-only" id="btnCont">3… 2… 1…</button>
   </div>
@@ -393,7 +412,7 @@ function showMode(m){
   if(m !== 'yt' && ytPlayer && ytPlayer.pauseVideo){ ytRemote = true; ytPlayer.pauseVideo(); setTimeout(() => ytRemote = false, 1500); }
   if(m !== 'vm' && vm && vm.pause){ vmRemote = true; vm.pause().catch(() => {}); setTimeout(() => vmRemote = false, 1500); }
   $('#menu').classList.add('hide');
-  atualizarTrava();
+  atualizarTrava(); wake();
 }
 function loadFrame(id){ vid.removeAttribute('src'); vid.load(); frame.src = 'https://drive.google.com/file/d/' + id + '/preview'; showMode('frame'); }
 function ytId(u){ const m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([\w-]{11})/); return m ? m[1] : null; }
@@ -558,6 +577,22 @@ $('#seek').addEventListener('input', e => { dragging = true; $('#tNow').textCont
 $('#seek').addEventListener('change', e => { if(!canCtl()){ dragging = false; return; } vid.currentTime = e.target.value / 1000 * vid.duration; dragging = false; });
 $('#vol').addEventListener('input', e => { vid.volume = e.target.value; vid.muted = false; $('#bMute').textContent = e.target.value > 0 ? '🔊' : '🔇'; });
 $('#bMute').onclick = () => { vid.muted = !vid.muted; $('#bMute').textContent = vid.muted ? '🔇' : '🔊'; };
+
+/* controles sobre o vídeo: somem sozinhos quando o filme está rodando */
+const playerEl = $('#player'); let idleT, wasIdle = false;
+function bigPlayUpd(){ $('#bigPlay').classList.toggle('hide', !(mode === 'video' && vid.paused && !$('#ctrl').classList.contains('off'))); }
+function wake(){
+  playerEl.classList.remove('idle'); clearTimeout(idleT); bigPlayUpd();
+  if(mode === 'video' && !vid.paused && $('#menu').classList.contains('hide')) idleT = setTimeout(() => playerEl.classList.add('idle'), 3000);
+}
+playerEl.addEventListener('pointerdown', () => { wasIdle = playerEl.classList.contains('idle'); }, true);
+['pointermove', 'pointerdown', 'keydown'].forEach(ev => playerEl.addEventListener(ev, wake));
+['play', 'pause', 'ended', 'loadedmetadata', 'emptied'].forEach(ev => vid.addEventListener(ev, wake));
+$('#bSet').addEventListener('click', () => setTimeout(wake, 0));
+document.querySelector('.stage').addEventListener('click', e => {
+  if(e.target.closest('#ctrl') || mode !== 'video') return;
+  if(!wasIdle && canCtl() && !$('#ctrl').classList.contains('off')) $('#bPlay').click();
+});
 $('#bFull').onclick = () => { const p = $('#player');
   if(document.fullscreenElement) document.exitFullscreen(); else (p.requestFullscreen || p.webkitRequestFullscreen).call(p); };
 $('#bSet').onclick = () => { setQual(); $('#menu').classList.toggle('hide'); };
