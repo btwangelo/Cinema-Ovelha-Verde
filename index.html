@@ -123,6 +123,29 @@ details .in{padding:6px 18px 18px;border-radius:0 0 16px 16px;background:var(--c
 #lockNote{display:none;text-align:center;margin:10px 0 0}
 body.noadm #lockNote{display:block}
 body.noadm .adm-only{display:none!important}
+
+/* lado a lado quando a tela está na horizontal (PC e tablet) */
+#side{display:contents}
+@media (orientation:landscape) and (min-width:900px) and (min-height:520px){
+ body{overflow:hidden}
+ #room{max-width:none;height:100vh;height:100dvh;padding:0 18px 16px;display:grid;
+  grid-template-columns:minmax(0,1fr) clamp(300px,28vw,380px);grid-template-rows:auto minmax(0,1fr);column-gap:18px}
+ #room.hide{display:none}
+ .top{grid-column:1/-1;margin:12px 0 0;padding:7px 14px}
+ .top .logo{font-size:22px}
+ #player{grid-column:1;grid-row:2;align-self:center;margin:14px auto 0;width:min(100%,calc((100vh - 170px) * 16 / 9));width:min(100%,calc((100dvh - 170px) * 16 / 9))}
+ #side{display:flex;flex-direction:column;grid-column:2;grid-row:2;min-height:0;gap:10px;margin-top:14px}
+ #side>*{margin:0!important}
+ #side .people{max-height:84px;overflow:auto;align-content:flex-start;flex:none}
+ #side details#src{flex:none;max-height:34%;overflow:auto}
+ #side details#src .in{padding:4px 14px 14px;gap:8px}
+ #side details#src .in .hint{display:none}
+ #side .hint{flex:none;font-size:12px}
+ #side .card.chat{flex:1;min-height:150px;display:flex;flex-direction:column;padding:12px 14px}
+ #side .card.chat h2{font-size:18px;margin:0 0 6px;flex:none}
+ #side #chat{flex:1;height:auto;min-height:0}
+ #side .card.chat .row{flex:none}
+}
 </style>
 </head>
 <body>
@@ -195,6 +218,7 @@ body.noadm .adm-only{display:none!important}
   </div>
  </div>
 
+ <aside id="side">
  <p class="hint" id="lockNote">Você é espectador: só o dono e os ADMs controlam o vídeo. O volume e a tela cheia continuam com você.</p>
  <p class="hint hide" id="hintAdm" style="margin-top:12px">Você é o dono. Use o botão ao lado de cada pessoa para torná-la ADM ou tirar o cargo, quantos quiser.</p>
  <div id="pessoas" class="people"></div>
@@ -214,6 +238,7 @@ body.noadm .adm-only{display:none!important}
   <div id="chat"></div>
   <div class="row"><input id="msg" placeholder="Diga algo…" maxlength="200" autocomplete="off"><button id="btnMsg">Enviar</button></div>
  </div>
+</aside>
 </section>
 
 <script>
