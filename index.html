@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Cinema Ovelha Verde</title>
+<link href="https://fonts.googleapis.com/css2?family=Shrikhand&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+:root{--g:#a6ff00;--p:#ff3d9a;--o:#ff9122;--c:#fff1d6;--k:#0b0b0b;--card:#151515;--line:#ffffff22;--mut:#ffffff99}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;color:var(--c);font-family:'DM Sans',system-ui,sans-serif;
+ background:radial-gradient(circle at 10% 0,#ff3d9a26,transparent 38%),radial-gradient(circle at 95% 15%,#ff912222,transparent 38%),var(--k)}
+.hide{display:none!important}
+.logo{font-family:'Shrikhand',Georgia,serif;font-weight:400;color:var(--c);text-shadow:2px 2px 0 var(--p),4px 4px 0 var(--o);margin:0}
+button{font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:12px;padding:12px 18px;background:var(--g);color:var(--k);transition:transform .1s,opacity .2s}
+button:active{transform:scale(.97)}
+button.sec{background:transparent;color:var(--c);border:1.5px solid var(--line)}
+button.pink{background:var(--p);color:#fff}
+input{width:100%;padding:13px 14px;border-radius:12px;border:1.5px solid var(--line);background:#0d0d0d;color:var(--c);font:inherit}
+input:focus{outline:none;border-color:var(--g)}
+label{display:block;font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+
+/* ---------- início ---------- */
+#home{max-width:440px;margin:0 auto;padding:0 18px 40px;text-align:center}
+.drip{height:36px;margin:0 -18px 8px;background:radial-gradient(circle at 25px 0,var(--g) 18px,transparent 19px) 0 0/70px 36px repeat-x,radial-gradient(circle at 62px 0,var(--g) 11px,transparent 12px) 0 0/70px 26px repeat-x}
+#home h1{font-size:clamp(38px,11vw,56px);margin:18px 0 6px}
+.tag{color:var(--g);font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:26px}
+#home .card{text-align:left;display:grid;gap:14px}
+.or{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:13px}
+.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
+.steps{margin:22px 0 0;padding:0;list-style:none;display:grid;gap:8px;color:var(--mut);font-size:14px;text-align:left}
+.steps b{color:var(--o)}
+
+/* ---------- sala ---------- */
+#room{max-width:900px;margin:0 auto;padding:0 14px 40px}
+.top{display:flex;align-items:center;gap:10px;padding:14px 0;flex-wrap:wrap}
+.top .logo{font-size:24px;margin-right:auto}
+.chip{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--mut)}
+.chip b{color:var(--g)}
+.top button{padding:8px 14px;font-size:13px}
+#player{background:#000;border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+.stage{position:relative;aspect-ratio:16/9;background:#000}
+.stage video,.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:#000}
+.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--mut);line-height:1.5}
+.empty .logo{font-size:28px;display:block;margin-bottom:6px}
+#yt{position:absolute;inset:0;display:none}
+#yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block!important}
+#count{position:absolute;inset:0;display:none;place-items:center;background:#000c;text-align:center;
+ font-family:'Shrikhand',serif;font-size:clamp(40px,14vw,100px);color:var(--g);text-shadow:4px 4px 0 var(--p)}
+#ctrl{background:#111;padding:10px 12px;display:grid;gap:8px;position:relative}
+#ctrl.off .bar,#ctrl.off .seek{opacity:.35;pointer-events:none}
+.seek{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.seek input[type=range]{flex:1}
+.bar{display:flex;align-items:center;gap:6px}
+.bar .sp{flex:1}
+.ib{background:transparent;color:var(--c);padding:8px 10px;font-size:18px;line-height:1;border-radius:10px}
+.ib:hover{background:#ffffff14}
+.ib.play{background:var(--g);color:var(--k);width:46px;height:46px;border-radius:50%;font-size:20px;padding:0}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;border-radius:5px;background:#ffffff30;padding:0;border:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--g);border:0}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--g);border:0}
+.vol{width:70px}
+#menu{position:absolute;right:12px;bottom:calc(100% - 4px);background:#1b1b1b;border:1px solid var(--line);border-radius:14px;padding:12px;width:min(300px,calc(100% - 24px));z-index:5;box-shadow:0 10px 30px #000a}
+#menu label{margin-top:2px}
+.speeds{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.speeds button{padding:6px 10px;font-size:13px;background:#ffffff14;color:var(--c)}
+.speeds button.on{background:var(--g);color:var(--k)}
+#qual{font-size:13px;color:var(--mut);line-height:1.45}
+#frameBar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--mut)}
+#frameBar button{padding:9px 14px}
+details{margin-top:12px}
+summary{cursor:pointer;font-weight:700;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"＋";float:right;color:var(--g)}
+details[open] summary:after{content:"−"}
+details .in{padding:14px;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;background:var(--card);display:grid;gap:10px}
+.row{display:flex;gap:8px}
+.hint{font-size:12.5px;color:var(--mut);line-height:1.5;margin:0}
+.chat{margin-top:12px}
+.chat h2{font-size:14px;margin:0 0 10px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em}
+#chat{height:240px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:2px 2px 10px}
+.m{max-width:82%;padding:8px 12px;border-radius:14px;background:#ffffff12;font-size:14px;word-break:break-word;align-self:flex-start}
+.m small{display:block;color:var(--o);font-weight:700;font-size:11px;margin-bottom:2px}
+.m.me{align-self:flex-end;background:var(--g);color:var(--k)}
+.m.me small{color:#0009}
+.m.sys{align-self:center;background:none;color:var(--mut);font-size:12px;padding:2px}
+</style>
+</head>
+<body>
+
+<!-- ========== INÍCIO ========== -->
+<section id="home">
+ <div class="drip"></div>
+ <h1 class="logo">Cinema Ovelha Verde</h1>
+ <div class="tag">assistam juntos, onde estiverem</div>
+ <div class="card">
+  <div><label for="nome">Seu nome</label><input id="nome" maxlength="20" placeholder="Como te chamam?" autocomplete="nickname"></div>
+  <button class="pink" id="btnCriar">Criar sala nova</button>
+  <div class="or">ou entre numa sala</div>
+  <div class="row"><input id="sala" maxlength="20" placeholder="código, ex.: ovelha-4821"><button id="btnEntrar">Entrar</button></div>
+ </div>
+ <ul class="steps">
+  <li><b>1.</b> Crie a sala e copie o convite.</li>
+  <li><b>2.</b> Cole o link do vídeo do Google Drive.</li>
+  <li><b>3.</b> Dê play: todo mundo assiste junto.</li>
+ </ul>
+</section>
+
+<!-- ========== SALA ========== -->
+<section id="room" class="hide">
+ <div class="top">
+  <h1 class="logo">Ovelha Verde</h1>
+  <span class="chip">sala <b id="roomCode"></b></span>
+  <span class="chip" id="status">conectando…</span>
+  <button class="sec" id="btnConvite">Copiar convite</button>
+  <button class="sec" id="btnSair">Sair</button>
+ </div>
+
+ <div id="player">
+  <div class="stage">
+   <div class="empty" id="vazio"><div><span class="logo">Nada passando ainda</span>Abra “Trocar vídeo” abaixo e cole um link do Drive ou do YouTube.</div></div>
+   <video id="vid" playsinline></video>
+   <iframe id="frame" allow="autoplay; fullscreen" allowfullscreen></iframe>
+   <div id="yt"><div id="ytp"></div></div>
+   <div id="count"></div>
+  </div>
+  <div id="ctrl" class="off">
+   <div id="menu" class="hide">
+    <label>Velocidade (vale para todos)</label>
+    <div class="speeds" id="speeds"></div>
+    <label>Qualidade</label>
+    <div id="qual"></div>
+   </div>
+   <div class="seek"><span id="tNow">0:00</span><input type="range" id="seek" min="0" max="1000" value="0"><span id="tAll">0:00</span></div>
+   <div class="bar">
+    <button class="ib" id="bBack" title="Voltar 10s">⏪</button>
+    <button class="ib play" id="bPlay" title="Play / Pause">▶</button>
+    <button class="ib" id="bFwd" title="Avançar 10s">⏩</button>
+    <button class="ib" id="bMute" title="Som">🔊</button>
+    <input type="range" class="vol" id="vol" min="0" max="1" step="0.05" value="1">
+    <span class="sp"></span>
+    <button class="ib" id="bSet" title="Velocidade e qualidade">⚙</button>
+    <button class="ib" id="bFull" title="Tela cheia">⛶</button>
+   </div>
+  </div>
+  <div id="frameBar" class="hide" style="padding:10px 12px;background:#111">
+   <span id="fbTxt" style="flex:1;min-width:200px"></span>
+   <button class="pink" id="btnCont">3… 2… 1…</button>
+  </div>
+ </div>
+
+ <details id="src" open>
+  <summary>Trocar vídeo</summary>
+  <div class="in">
+   <div class="row"><input id="link" placeholder="Link do Google Drive ou do YouTube"><button id="btnCarregar">Carregar</button></div>
+   <p class="hint">No Drive, compartilhe o arquivo como “Qualquer pessoa com o link”. Cada pessoa precisa ter acesso ao vídeo. Arquivos pequenos tocam sincronizados; os grandes abrem no player do Drive. Links do YouTube também funcionam e ficam sincronizados.</p>
+  </div>
+ </details>
+
+ <div class="card chat">
+  <h2>Papo da sala</h2>
+  <div id="chat"></div>
+  <div class="row"><input id="msg" placeholder="Diga algo…" maxlength="200" autocomplete="off"><button id="btnMsg">Enviar</button></div>
+ </div>
+</section>
+
+<script>
+const $ = s => document.querySelector(s);
+const vid = $('#vid'), frame = $('#frame');
+let peer, isHost = false, conns = [], hostConn = null;
+let me = '', code = '', src = null, remote = false, pending = null, mode = null, dragging = false;
+
+/* ---------- utilidades ---------- */
+function status(t){ $('#status').textContent = t; }
+function say(name, text, kind){
+  const d = document.createElement('div');
+  d.className = 'm' + (kind ? ' ' + kind : '');
+  if(kind === 'sys'){ d.textContent = text; }
+  else {
+    if(kind !== 'me'){ const s = document.createElement('small'); s.textContent = name; d.appendChild(s); }
+    d.appendChild(document.createTextNode(text));
+  }
+  $('#chat').appendChild(d); $('#chat').scrollTop = 1e6;
+}
+function updateCount(){ status(isHost ? (conns.length + 1) + ' na sala' : 'conectado'); }
+function fmt(s){ s = Math.max(0, Math.floor(s || 0)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+  return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); }
+
+/* ---------- rede ---------- */
+function send(m, except){
+  if(isHost) conns.forEach(c => { if(c !== except && c.open) c.send(m); });
+  else if(hostConn && hostConn.open) hostConn.send(m);
+}
+function onMsg(m, from){ if(isHost) send(m, from); handle(m); }
+function setupConn(c){
+  c.on('open', () => {
+    if(isHost){ conns.push(c); updateCount();
+      c.send({t:'hello', src, ...curState()}); }
+    else { hostConn = c; updateCount(); send({t:'chat', name:'', text:me + ' entrou', kind:'sys'}); }
+  });
+  c.on('data', m => onMsg(m, c));
+  c.on('close', () => { conns = conns.filter(x => x !== c);
+    if(isHost) updateCount(); else status('anfitrião saiu: recarregue'); });
+}
+function join(){
+  me = $('#nome').value.trim() || 'Anônimo';
+  code = $('#sala').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+  if(!code){ $('#sala').focus(); return; }
+  const id = 'ovelha-verde-' + code;
+  peer = new Peer(id);
+  peer.on('open', () => { isHost = true; peer.on('connection', setupConn); enter(); say('', 'Você é o anfitrião. Copie o convite e chame a galera.', 'sys'); });
+  peer.on('error', e => {
+    if(e.type === 'unavailable-id'){
+      peer = new Peer();
+      peer.on('open', () => { isHost = false; setupConn(peer.connect(id, {reliable:true})); enter(); });
+      peer.on('error', er => status('erro: ' + er.type));
+    } else status('erro: ' + e.type);
+  });
+}
+function enter(){
+  $('#home').classList.add('hide'); $('#room').classList.remove('hide');
+  $('#roomCode').textContent = code; updateCount();
+}
+
+/* ---------- vídeo ---------- */
+function driveId(u){ const m = u.match(/\/d\/([\w-]+)/) || u.match(/[?&]id=([\w-]+)/); return m ? m[1] : null; }
+function showMode(m){
+  mode = m; $('#vazio').classList.add('hide');
+  vid.style.display = m === 'video' ? 'block' : 'none';
+  frame.style.display = m === 'frame' ? 'block' : 'none';
+  $('#yt').style.display = m === 'yt' ? 'block' : 'none';
+  $('#ctrl').classList.toggle('hide', m !== 'video');
+  $('#frameBar').classList.toggle('hide', m === 'video');
+  $('#btnCont').classList.toggle('hide', m === 'yt');
+  $('#fbTxt').textContent = m === 'yt'
+    ? 'Modo YouTube: play, pause e avanço são sincronizados. Qualidade, legendas e velocidade ficam na engrenagem do próprio player.'
+    : 'Modo Drive: o player do Drive tem controles próprios (qualidade na engrenagem dele). Use a contagem para dar play juntos.';
+  if(m === 'video') $('#ctrl').classList.add('off');
+  if(m !== 'yt' && ytPlayer && ytPlayer.pauseVideo){ ytRemote = true; ytPlayer.pauseVideo(); setTimeout(() => ytRemote = false, 1500); }
+  $('#menu').classList.add('hide');
+}
+function loadFrame(id){ vid.removeAttribute('src'); vid.load(); frame.src = 'https://drive.google.com/file/d/' + id + '/preview'; showMode('frame'); }
+function ytId(u){ const m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([\w-]{11})/); return m ? m[1] : null; }
+function loadSrc(url){
+  src = url; frame.src = 'about:blank';
+  const y = ytId(url), id = driveId(url);
+  $('#src').open = false;
+  if(y){ vid.onerror = null; vid.pause(); vid.removeAttribute('src'); vid.load(); loadYT(y); return; }
+  vid.onerror = () => { if(id) loadFrame(id); };
+  vid.src = id ? 'https://drive.google.com/uc?export=download&id=' + id : url;
+  showMode('video');
+}
+function applyState(m){
+  remote = true;
+  if(m.rate && vid.playbackRate !== m.rate) vid.playbackRate = m.rate;
+  if(Math.abs(vid.currentTime - m.time) > 1.2) vid.currentTime = m.time;
+  if(m.playing) vid.play().catch(() => say('', 'Toque no play para entrar na sincronia.', 'sys')); else vid.pause();
+  setTimeout(() => remote = false, 1000);
+}
+function pushState(){ if(!remote && mode === 'video') send({t:'state', playing:!vid.paused, time:vid.currentTime, rate:vid.playbackRate}); }
+['play', 'pause', 'seeked', 'ratechange'].forEach(ev => vid.addEventListener(ev, pushState));
+vid.addEventListener('loadedmetadata', () => {
+  $('#ctrl').classList.remove('off'); $('#tAll').textContent = fmt(vid.duration); setQual();
+  if(pending){ applyState(pending); pending = null; }
+});
+vid.addEventListener('play', () => $('#bPlay').textContent = '⏸');
+vid.addEventListener('pause', () => $('#bPlay').textContent = '▶');
+vid.addEventListener('timeupdate', () => {
+  $('#tNow').textContent = fmt(vid.currentTime);
+  if(!dragging && vid.duration) $('#seek').value = vid.currentTime / vid.duration * 1000;
+});
+function countdown(){
+  const el = $('#count'); el.style.display = 'grid'; let n = 3; el.textContent = n;
+  const t = setInterval(() => { n--;
+    if(n > 0) el.textContent = n; else if(n === 0) el.textContent = 'DÁ PLAY!';
+    else { clearInterval(t); el.style.display = 'none'; } }, 1000);
+}
+
+/* ---------- YouTube ---------- */
+let ytPlayer = null, ytPending = null, ytRemote = false, ytLast = null;
+function curState(){
+  if(mode === 'yt' && ytPlayer && ytPlayer.getCurrentTime)
+    return {playing: ytPlayer.getPlayerState() === 1, time: ytPlayer.getCurrentTime(), rate: ytPlayer.getPlaybackRate()};
+  return {playing: !vid.paused, time: vid.currentTime, rate: vid.playbackRate};
+}
+function loadYT(id){
+  showMode('yt');
+  if(window.YT && YT.Player){ buildYT(id); return; }
+  window.onYouTubeIframeAPIReady = () => buildYT(id);
+  if(!document.getElementById('ytapi')){
+    const s = document.createElement('script'); s.id = 'ytapi'; s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s);
+  }
+}
+function buildYT(id){
+  if(ytPlayer && ytPlayer.loadVideoById){
+    ytRemote = true; ytPlayer.loadVideoById(id);
+    setTimeout(() => { ytRemote = false; if(ytPending){ applyYT(ytPending); ytPending = null; } }, 1500);
+    return;
+  }
+  ytPlayer = new YT.Player('ytp', {videoId:id, playerVars:Object.assign({playsinline:1, rel:0, enablejsapi:1}, /^https?:$/.test(location.protocol) ? {origin:location.origin} : {}), events:{
+    onReady: () => { if(ytPending){ applyYT(ytPending); ytPending = null; } },
+    onStateChange: e => { if(!ytRemote && (e.data === 1 || e.data === 2)) pushYT(); },
+    onPlaybackRateChange: () => { if(!ytRemote) pushYT(); },
+    onError: e => say('', ytErro(e.data), 'sys')
+  }});
+}
+function ytErro(c){
+  if(c === 101 || c === 150 || c === 152) return 'Esse vídeo não permite ser exibido fora do YouTube. Tente outro vídeo.';
+  if(c === 153 || c === 2){
+    return location.protocol === 'file:'
+      ? 'Erro de player: o site foi aberto como arquivo. Abra pelo link https publicado (Netlify).'
+      : 'Erro de player: o YouTube não reconheceu o site. Abra pelo link https publicado, fora de prévias ou de navegadores embutidos de apps.';
+  }
+  if(c === 100) return 'Vídeo não encontrado ou privado.';
+  return 'O YouTube não conseguiu carregar esse vídeo (erro ' + c + ').';
+}
+function pushYT(){ if(ytPlayer && ytPlayer.getCurrentTime) send({t:'state', ...curState()}); }
+function applyYT(m){
+  if(!ytPlayer || !ytPlayer.seekTo){ ytPending = m; return; }
+  ytRemote = true;
+  if(m.rate && ytPlayer.getPlaybackRate() !== m.rate) ytPlayer.setPlaybackRate(m.rate);
+  if(Math.abs(ytPlayer.getCurrentTime() - m.time) > 1.5) ytPlayer.seekTo(m.time, true);
+  if(m.playing) ytPlayer.playVideo(); else ytPlayer.pauseVideo();
+  setTimeout(() => ytRemote = false, 1500);
+}
+setInterval(() => {  /* detecta avanço/volta feitos na barra do YouTube */
+  if(mode !== 'yt' || !ytPlayer || !ytPlayer.getCurrentTime) return;
+  const t = ytPlayer.getCurrentTime(), pl = ytPlayer.getPlayerState() === 1;
+  if(ytLast !== null && !ytRemote && Math.abs(t - (ytLast + (pl ? 0.7 * ytPlayer.getPlaybackRate() : 0))) > 1.5) pushYT();
+  ytLast = t;
+}, 700);
+
+/* ---------- controles ---------- */
+$('#bPlay').onclick = () => vid.paused ? vid.play().catch(() => {}) : vid.pause();
+$('#bBack').onclick = () => vid.currentTime = Math.max(0, vid.currentTime - 10);
+$('#bFwd').onclick = () => vid.currentTime = Math.min(vid.duration || 1e9, vid.currentTime + 10);
+$('#seek').addEventListener('input', e => { dragging = true; $('#tNow').textContent = fmt(e.target.value / 1000 * vid.duration); });
+$('#seek').addEventListener('change', e => { vid.currentTime = e.target.value / 1000 * vid.duration; dragging = false; });
+$('#vol').addEventListener('input', e => { vid.volume = e.target.value; vid.muted = false; $('#bMute').textContent = e.target.value > 0 ? '🔊' : '🔇'; });
+$('#bMute').onclick = () => { vid.muted = !vid.muted; $('#bMute').textContent = vid.muted ? '🔇' : '🔊'; };
+$('#bFull').onclick = () => { const p = $('#player');
+  if(document.fullscreenElement) document.exitFullscreen(); else (p.requestFullscreen || p.webkitRequestFullscreen).call(p); };
+$('#bSet').onclick = () => { setQual(); $('#menu').classList.toggle('hide'); };
+[0.5, 0.75, 1, 1.25, 1.5, 2].forEach(r => {
+  const b = document.createElement('button'); b.textContent = r + 'x'; b.dataset.r = r;
+  b.onclick = () => { vid.playbackRate = r; markSpeed(); }; $('#speeds').appendChild(b);
+});
+function markSpeed(){ document.querySelectorAll('#speeds button').forEach(b => b.classList.toggle('on', +b.dataset.r === vid.playbackRate)); }
+vid.addEventListener('ratechange', markSpeed); markSpeed();
+function setQual(){
+  $('#qual').textContent = vid.videoHeight
+    ? 'Original do arquivo: ' + vid.videoWidth + '×' + vid.videoHeight + '. No modo sincronizado o Drive entrega um arquivo só, sem opções de qualidade. Para escolher a qualidade, abra o vídeo no modo Drive.'
+    : 'Carregue um vídeo para ver a qualidade.';
+}
+
+/* ---------- mensagens ---------- */
+function handle(m){
+  if(m.t === 'hello'){ if(m.src){ const st = {playing:m.playing, time:m.time, rate:m.rate}; if(ytId(m.src)) ytPending = st; else pending = st; loadSrc(m.src); } }
+  else if(m.t === 'src'){ loadSrc(m.url); say('', 'Vídeo novo carregado', 'sys'); }
+  else if(m.t === 'state'){ if(mode === 'video') applyState(m); else if(mode === 'yt') applyYT(m); }
+  else if(m.t === 'count'){ countdown(); }
+  else if(m.t === 'chat'){ say(m.name, m.text, m.kind); }
+}
+
+/* ---------- botões ---------- */
+$('#btnEntrar').onclick = join;
+$('#btnCriar').onclick = () => { $('#sala').value = 'ovelha-' + Math.floor(1000 + Math.random() * 9000); join(); };
+$('#btnCarregar').onclick = () => { const u = $('#link').value.trim(); if(!u) return; loadSrc(u); send({t:'src', url:u}); };
+$('#btnCont').onclick = () => { countdown(); send({t:'count'}); };
+$('#btnMsg').onclick = () => { const text = $('#msg').value.trim(); if(!text) return;
+  say(me, text, 'me'); send({t:'chat', name:me, text}); $('#msg').value = ''; };
+$('#msg').addEventListener('keydown', e => { if(e.key === 'Enter') $('#btnMsg').click(); });
+$('#sala').addEventListener('keydown', e => { if(e.key === 'Enter') join(); });
+$('#btnSair').onclick = () => { location.href = location.pathname; };
+$('#btnConvite').onclick = () => {
+  const link = location.origin + location.pathname + '?sala=' + code;
+  (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject())
+    .then(() => say('', 'Convite copiado', 'sys')).catch(() => prompt('Copie o convite:', link));
+};
+const q = new URLSearchParams(location.search).get('sala');
+if(q){ $('#sala').value = q; $('#btnEntrar').textContent = 'Entrar na sala'; }
+</script>
+</body>
+</html>
