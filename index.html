@@ -152,27 +152,37 @@ body.noadm .adm-only{display:none!important}
 #sp iframe,#sc iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
 #sc{background:#000}
 body.aud #vid{display:none!important}
-body.aud .stage{aspect-ratio:auto;height:250px}
-body.aud .stage[data-m=yt],body.aud .stage[data-m=vm]{height:auto;aspect-ratio:16/9;max-height:calc(100vh - 190px);max-height:calc(100dvh - 190px)}
-body.aud .stage[data-m=sp]{height:min(352px,62vh)}
-body.aud .stage[data-m=sc]{height:166px}
+body.aud .stage{aspect-ratio:auto;height:440px;max-height:none}
 body.aud .stage[data-m=frame]{height:200px}
-#au{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:16px;padding:20px 20px 90px;text-align:center;
+body.aud #sp{top:auto;height:80px;z-index:3}
+body.aud .stage[data-m=sp] #au,body.aud .stage[data-m=video] #au{padding-bottom:100px}
+#au{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:14px;padding:16px 18px 18px;text-align:center;overflow:hidden;
  background:radial-gradient(circle at 50% 38%,#A30002 0%,#5E0003 55%,#3B0004 100%)}
-#au .eq{display:flex;align-items:flex-end;justify-content:center;gap:7px;height:72px}
-#au .eq i{display:block;width:9px;height:14px;border-radius:5px;background:var(--ecru);animation:eq 1s ease-in-out infinite alternate;animation-play-state:paused}
-#au .eq i:nth-child(2n){background:var(--alien)}
-#au .eq i:nth-child(1){animation-duration:.9s}
-#au .eq i:nth-child(2){animation-duration:.7s}
-#au .eq i:nth-child(3){animation-duration:1.1s}
-#au .eq i:nth-child(4){animation-duration:.8s}
-#au .eq i:nth-child(5){animation-duration:1.2s}
-#au .eq i:nth-child(6){animation-duration:.75s}
-#au .eq i:nth-child(7){animation-duration:1s}
-#au.on .eq i{animation-play-state:running}
-@keyframes eq{from{height:12px}to{height:72px}}
+.rec{--d:clamp(140px,44vw,210px);position:relative;width:calc(var(--d)*1.55);height:var(--d)}
+.sleeve{position:absolute;left:0;top:0;z-index:2;width:var(--d);height:var(--d);border-radius:6px;box-shadow:0 12px 30px #000a;
+ background:var(--cover,none) center/cover no-repeat,linear-gradient(135deg,#A30002,#3B0004);display:grid;place-items:center;font-size:56px;color:#ffffc966}
+#au:not(.nocover) .sleeve::before{content:none}
+#au.nocover .sleeve::before{content:"♪"}
+.vinyl{position:absolute;right:0;top:0;z-index:1;width:var(--d);height:var(--d);border-radius:50%;display:grid;place-items:center;
+ box-shadow:0 8px 24px #0009;animation:spin 3.2s linear infinite;animation-play-state:paused;
+ background:
+  radial-gradient(circle,#0000 0 31%,#0007 31.5%,#0000 33%),
+  conic-gradient(#ffffff26,#0000 18%,#ffffff1a 34%,#0000 52%,#ffffff2b 70%,#0000 88%,#ffffff26),
+  repeating-radial-gradient(circle,#0000 0 2px,#0000003d 3px),
+  radial-gradient(circle at 28% 30%,#6fb4c4aa 0,#0000 22%),
+  radial-gradient(circle at 70% 72%,#8fd0d855 0,#0000 25%),
+  radial-gradient(circle at 50% 50%,#2c7a92 0,#17566e 45%,#0b2c3d 100%)}
+#au.on .vinyl{animation-play-state:running}
+.vinyl .lbl{width:36%;height:36%;border-radius:50%;position:relative;border:3px solid #000;
+ background:var(--cover,none) center/cover no-repeat,#111}
+.vinyl .lbl::after{content:"";position:absolute;left:50%;top:50%;width:14%;height:14%;border-radius:50%;transform:translate(-50%,-50%);background:#e9eef0;box-shadow:0 0 0 2px #0006}
+@keyframes spin{to{transform:rotate(360deg)}}
 #auTitle{font-family:'Caprasimo',serif;font-size:clamp(18px,3.4vw,26px);line-height:1.2;max-width:90%;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-@media (prefers-reduced-motion:reduce){#au .eq i{animation:none;height:36px}}
+#auCtl{width:min(100%,420px);display:none;gap:4px}
+#auCtl.show{display:grid}
+#auCtl.lock .seek,#auCtl.lock .bar{opacity:.35;pointer-events:none}
+#auCtl .bar{justify-content:center;gap:14px}
+@media (prefers-reduced-motion:reduce){.vinyl{animation-duration:12s}}
 
 /* lado a lado quando a tela está na horizontal (PC e tablet) */
 #side{display:contents}
@@ -247,7 +257,9 @@ body.aud .stage[data-m=frame]{height:200px}
    <div id="vm"></div>
    <div id="sp"></div>
    <div id="sc"></div>
-   <div id="au" class="hide"><div class="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div id="auTitle"></div></div>
+   <div id="au" class="hide nocover"><div class="rec"><div class="sleeve"></div><div class="vinyl"><div class="lbl"></div></div></div><div id="auTitle"></div>
+    <div id="auCtl"><div class="seek"><span id="aNow">0:00</span><input type="range" id="aSeek" min="0" max="1000" value="0"><span id="aAll">0:00</span></div>
+     <div class="bar"><button class="ib" id="aBack" title="Voltar 10s">−10</button><button class="ib play" id="aPlay" title="Play / Pause">▶</button><button class="ib" id="aFwd" title="Avançar 10s">+10</button></div></div></div>
    <div id="count"></div>
    <div id="shield" class="hide"></div>
    <div id="bigPlay" class="hide">▶</div>
@@ -499,7 +511,7 @@ function showMode(m){
   $('#sp').style.display = m === 'sp' ? 'block' : 'none';
   $('#sc').style.display = m === 'sc' ? 'block' : 'none';
   $('.stage').dataset.m = m;
-  $('#au').classList.toggle('hide', !(kind === 'audio' && m === 'video'));
+  $('#au').classList.toggle('hide', !(kind === 'audio' && m !== 'frame'));
   $('#ctrl').classList.toggle('hide', m !== 'video');
   $('#frameBar').classList.toggle('hide', m === 'video');
   $('#btnCont').classList.toggle('hide', m !== 'frame');
@@ -848,6 +860,82 @@ if(FOTOS.mosaico) document.documentElement.style.setProperty('--wall', 'url("' +
 desenharFila();
 const q = new URLSearchParams(location.search).get('sala');
 if(q){ $('#sala').value = q; $('#btnEntrar').textContent = 'Entrar na sala'; }
+</script>
+
+<script>
+/* ---------- disco girando (sala de áudio) ---------- */
+(function(){
+  const au = document.getElementById('au'), cache = {};
+  let dur = 0, dragA = false;
+  function setCover(u){
+    if(!u){ au.classList.add('nocover'); au.style.removeProperty('--cover'); return; }
+    au.classList.remove('nocover'); au.style.setProperty('--cover', 'url("' + u + '")');
+  }
+  function coverYT(id){
+    const hi = 'https://i.ytimg.com/vi/' + id + '/maxresdefault.jpg', lo = 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg';
+    const im = new Image();
+    im.onload = () => setCover(im.naturalWidth >= 640 ? hi : lo);
+    im.onerror = () => setCover(lo);
+    im.src = hi;
+  }
+  function coverOembed(u, api, want){
+    if(cache[u] !== undefined){ if(src === want) setCover(cache[u]); return; }
+    const ctl = new AbortController(); setTimeout(() => ctl.abort(), 6000);
+    fetch(api + encodeURIComponent(u), {signal:ctl.signal}).then(r => r.json()).then(j => {
+      cache[u] = (j && j.thumbnail_url) || ''; if(src === want) setCover(cache[u]);
+    }).catch(() => {});
+  }
+  const orig = loadSrc;
+  loadSrc = function(url){
+    orig.apply(this, arguments);
+    if(kind !== 'audio' || src !== url) return;
+    dur = 0; setCover('');
+    const t = tipoLink(url);
+    if(t === 'yt'){ const id = ytId(url); if(id) coverYT(id); }
+    else if(t === 'sp') coverOembed(url, 'https://open.spotify.com/oembed?url=', url);
+    else if(t === 'sc') coverOembed(url, 'https://soundcloud.com/oembed?format=json&url=', url);
+  };
+  const $a = id => document.getElementById(id);
+  function info(){
+    if(mode === 'yt' && typeof ytPlayer !== 'undefined' && ytPlayer && ytPlayer.getCurrentTime){
+      return {playing: ytPlayer.getPlayerState() === 1, t: ytPlayer.getCurrentTime(), d: ytPlayer.getDuration ? ytPlayer.getDuration() : 0};
+    }
+    if(mode === 'sc' && typeof scLast !== 'undefined'){
+      return {playing: scLast.playing, t: scLast.time + (scLast.playing ? (Date.now() - scLast.at) / 1000 : 0), d: dur};
+    }
+    if(mode === 'sp' && typeof spLast !== 'undefined') return {playing: spLast.playing, t: 0, d: 0};
+    if(mode === 'video') return {playing: !vid.paused, t: 0, d: 0};
+    return {playing:false, t:0, d:0};
+  }
+  setInterval(() => {
+    if(kind !== 'audio') return;
+    const i = info(), own = mode === 'yt' || mode === 'sc';
+    au.classList.toggle('on', !!i.playing);
+    $a('auCtl').classList.toggle('show', own);
+    $a('auCtl').classList.toggle('lock', !canCtl());
+    if(mode === 'sc' && sc && !dur && sc.getDuration) sc.getDuration(ms => { dur = ms / 1000; });
+    if(!own) return;
+    $a('aPlay').textContent = i.playing ? '⏸' : '▶';
+    $a('aNow').textContent = fmt(i.t || 0); $a('aAll').textContent = fmt(i.d || 0);
+    if(!dragA && i.d) $a('aSeek').value = Math.min(1000, i.t / i.d * 1000);
+  }, 400);
+  function toggle(){
+    if(!canCtl()) return;
+    if(mode === 'yt' && ytPlayer && ytPlayer.playVideo) ytPlayer.getPlayerState() === 1 ? ytPlayer.pauseVideo() : ytPlayer.playVideo();
+    else if(mode === 'sc' && sc) scLast.playing ? sc.pause() : sc.play();
+  }
+  function seekTo(sec){
+    if(!canCtl()) return;
+    const i = info(), d = i.d || 1e9; sec = Math.max(0, Math.min(d - 0.5, sec));
+    if(mode === 'yt' && ytPlayer.seekTo) ytPlayer.seekTo(sec, true);
+    else if(mode === 'sc' && sc) sc.seekTo(sec * 1000);
+  }
+  $a('aPlay').onclick = toggle;
+  $a('aBack').onclick = () => seekTo(info().t - 10);
+  $a('aFwd').onclick = () => seekTo(info().t + 10);
+  $a('aSeek').addEventListener('input', e => { dragA = true; $a('aNow').textContent = fmt(e.target.value / 1000 * info().d); });
+  $a('aSeek').addEventListener('change', e => { seekTo(e.target.value / 1000 * info().d); dragA = false; });
+})();
 </script>
 </body>
 </html>
